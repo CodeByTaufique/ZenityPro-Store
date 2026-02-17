@@ -19,9 +19,8 @@ isNumber() {
     fi
 }
 
-# LOW STOCK ALERT
+# Low Stock Alert
 lowStockAlert() {
-
     alert=""
 
     while IFS='|' read -r id name price stock
@@ -36,9 +35,8 @@ lowStockAlert() {
     fi
 }
 
-# CHANGE PASSWORD
+# Change Password
 changePassword() {
-
     data=$(zenity --forms \
         --title="Change Password" \
         --width=400 \
@@ -73,9 +71,8 @@ changePassword() {
     zenity --info --width=300 --text="Password Updated"
 }
 
-# PURCHASE HISTORY
+# Purchase History
 purchaseHistory() {
-
     history=$(grep "^$USERNAME|" "$SALES")
 
     if [ -z "$history" ]; then
@@ -110,7 +107,6 @@ startMenu() {
 
 # Register Account
 register() {
-
     data=$(zenity --forms \
         --title="Create Account" \
         --width=400 \
@@ -148,7 +144,6 @@ register() {
 
 # Login
 login() {
-
     data=$(zenity --forms \
         --title="Login" \
         --width=400 \
@@ -182,7 +177,6 @@ login() {
 
 # Admin Menu
 adminMenu() {
-
     lowStockAlert
 
     choice=$(zenity --list \
@@ -234,7 +228,6 @@ userMenu() {
 }
 
 addProduct() {
-
     data=$(zenity --forms \
         --title="Add Product" \
         --width=400 \
@@ -265,7 +258,6 @@ addProduct() {
 
 # View products
 viewProducts() {
-
     if [ ! -s "$PRODUCTS" ]; then
         zenity --info --width=300 --text="No products available"
         return
@@ -280,7 +272,6 @@ viewProducts() {
 
 # Buy product
 buyProduct() {
-
     if [ ! -s "$PRODUCTS" ]; then
         zenity --info --width=300 --text="No products available"
         return
@@ -349,7 +340,6 @@ buyProduct() {
 
 # Request product
 reqProduct() {
-
     data=$(zenity --forms \
         --title="Request Product" \
         --width=400 \
@@ -376,7 +366,6 @@ reqProduct() {
 
 # View request
 viewReq() {
-
     if [ ! -s "$REQUESTS" ]; then
         zenity --info --width=300 --text="No requests"
         return
@@ -391,7 +380,6 @@ viewReq() {
 
 # View Sales
 viewSales() {
-
     if [ ! -s "$SALES" ]; then
         zenity --info --width=300 --text="No sales yet"
         return
@@ -403,7 +391,6 @@ viewSales() {
         --height=400 \
         --filename="$SALES"
 }
-
 # Start
 startMenu
 
