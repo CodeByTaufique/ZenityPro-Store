@@ -147,5 +147,5 @@ Designed to demonstrate:
 
 ## ✍️ Author
 
-**Taufique**
-**Clean Code. Minimalist Design. Powerful Scripting.**
+**Taufique
+Clean Code. Minimalist Design. Powerful Scripting.**
