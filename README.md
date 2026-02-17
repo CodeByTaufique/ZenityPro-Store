@@ -148,4 +148,4 @@ Designed to demonstrate:
 ## ✍️ Author
 
 **Taufique**
-*Clean Code. Minimalist Design. Powerful Scripting.*
+**Clean Code. Minimalist Design. Powerful Scripting.**
