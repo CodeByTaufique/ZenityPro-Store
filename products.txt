@@ -1,0 +1,5 @@
+1|Dairy Milk Silk|790|8
+2|KitKat|100|15
+3|Zero Chips|10|20
+4|Detol|80|4
+5|Mojo Zero|50|20
