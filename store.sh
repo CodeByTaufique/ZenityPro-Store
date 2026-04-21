@@ -70,21 +70,47 @@ changePassword() {
 
     zenity --info --width=300 --text="Password Updated"
 }
+ 
 
 # Purchase History
 purchaseHistory() {
-    history=$(grep "^$USERNAME|" "$SALES")
+        history=$(grep "^$USERNAME|" "$SALES")
 
-    if [ -z "$history" ]; then
-        zenity --info --width=300 --text="No purchase history"
-        return
-    fi
+        if [ -z "$history" ]; then
+                zenity --info --width=300 --text="No purchase history"
+                return
+        fi
 
-    zenity --text-info \
-        --title="My Purchases" \
-        --width=500 \
-        --height=400 \
-        --filename=<(echo "$history")
+        ( 
+                while IFS='|' read -r user pid qty rest || [ -n "$user" ]; do
+                        pname="Unknown"
+                        pprice="0"
+
+                        while IFS='|' read -r id name price stock || [ -n "$id" ]; do
+                                if [[ "$id" == "$pid" ]]; then
+                                        pname="$name"
+                                        pprice="$price"
+                                        break
+                                fi
+                        done < "$PRODUCTS"
+
+                        echo "$pname"
+                        echo "$qty"
+                        echo "$pprice"
+                        echo "$rest"
+
+                done <<< "$history"
+
+) | zenity --list \
+                --title="My Purchase History" \
+                --text="Products You Bought" \
+                --width=800 \
+                --height=400 \
+                --column="Product Name" \
+                --column="Quantity" \
+                --column="Price" \
+                --column="Details" \
+                --ok-label="Close"
 }
 
 # this  will be the first method which will show the option 
@@ -138,7 +164,7 @@ register() {
 
     echo "$user|$pass|$role" >> "$USERS"
 
-    zenity --info --width=300 --text="Account Created Successfully!"
+zenity --info --width=300 --text="Account Created Successfully!"
     startMenu
 }
 
@@ -173,6 +199,7 @@ login() {
     else
         userMenu
     fi
+
 }
 
 # Admin Menu
@@ -258,16 +285,27 @@ addProduct() {
 
 # View products
 viewProducts() {
-    if [ ! -s "$PRODUCTS" ]; then
-        zenity --info --width=300 --text="No products available"
-        return
-    fi
+        if [ ! -s "$PRODUCTS" ]; then
+                zenity --info --width=300 --text="No products available"
+                return
+        fi
 
-    zenity --text-info \
-        --title="Available Products" \
-        --width=500 \
-        --height=400 \
-        --filename="$PRODUCTS"
+        ( 
+                while IFS='|' read -r id name price stock || [ -n "$id" ]; do
+                        echo "$id"
+                        echo "$name"
+                        echo "$price"
+                        echo "$stock"
+                done < "$PRODUCTS"
+        ) | zenity --list \
+                --title="Available Products" \
+                --width=700 \
+                --height=400 \
+                --column="Product ID" \
+                --column="Product Name" \
+                --column="Price" \
+                --column="Stock" \
+                --ok-label="Close"
 }
 
 # Buy product
@@ -307,7 +345,7 @@ buyProduct() {
     stock=$(grep "^$pid|" "$PRODUCTS" | cut -d'|' -f4)
     price=$(grep "^$pid|" "$PRODUCTS" | cut -d'|' -f3)
 
-    if (( qty > stock )); then
+ if (( qty > stock )); then
         zenity --error --width=300 --text="Not enough stock. Please send a request."
         return
     fi
@@ -364,32 +402,79 @@ reqProduct() {
     zenity --info --width=300 --text="Request submitted"
 }
 
+
 # View request
 viewReq() {
-    if [ ! -s "$REQUESTS" ]; then
-        zenity --info --width=300 --text="No requests"
-        return
-    fi
+        if [ ! -s "$REQUESTS" ]; then
+                zenity --info --width=300 --text="No requests"
+                return
+        fi
 
-    zenity --text-info \
-        --title="Product Requests" \
-        --width=500 \
-        --height=400 \
-        --filename="$REQUESTS"
+        ( 
+                while IFS='|' read -r user pid qty status || [ -n "$user" ]; do
+                        pname="Unknown"
+                        while IFS='|' read -r id name price stock || [ -n "$id" ]; do
+                                if [[ "$id" == "$pid" ]]; then
+                                        pname="$name"
+                                        break
+                                fi
+                        done < "$PRODUCTS"
+
+                        echo "$user"
+                        echo "$pname"
+                        echo "$qty"
+                        echo "$status"
+
+                done < "$REQUESTS"
+        ) | zenity --list \
+                --title="Product Requests" \
+                --width=800 \
+                --height=400 \
+                --column="User" \
+                --column="Product Name" \
+                --column="Quantity" \
+                --column="Status" \
+                --ok-label="Close"
 }
 
 # View Sales
 viewSales() {
-    if [ ! -s "$SALES" ]; then
-        zenity --info --width=300 --text="No sales yet"
-        return
-    fi
+        if [ ! -s "$SALES" ]; then
+                zenity --info --width=300 --text="No sales yet"
+                return
+        fi
 
-    zenity --text-info \
-        --title="Sales Report" \
-        --width=500 \
-        --height=400 \
-        --filename="$SALES"
+        (
+                while IFS='|' read -r user pid qty rest || [ -n "$user" ]; do
+                        pname="Unknown"
+                        pprice="0"
+
+                        while IFS='|' read -r id name price stock || [ -n "$id" ]; do
+                                if [[ "$id" == "$pid" ]]; then
+                                        pname="$name"
+                                        pprice="$price"
+                                        break
+                                fi
+                        done < "$PRODUCTS"
+
+                        echo "$user"
+                        echo "$pname"
+                        echo "$qty"
+                        echo "$pprice"
+                        echo "$rest"
+
+                done < "$SALES"
+
+) | zenity --list \
+                --title="Sales Report" \
+                --width=900 \
+                --height=400 \
+                --column="User" \
+                --column="Product Name" \
+                --column="Quantity" \
+                --column="Price" \
+                --column="Details" \
+                --ok-label="Close"
 }
 # Start
 startMenu
